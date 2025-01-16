@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
 
         $middleware->alias([
-            'isMembership' => IsMembership::class,
+            'isMember' => IsMembership::class,
             'isAuth' => IsAuth::class
         ]);
 

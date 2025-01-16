@@ -2,22 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-
-$movies = [];
-
-for ($i = 0; $i < 10; $i++) {
-    $movies[] = [
-        'title' => 'Movie ' . $i,
-        'release_date' => now()->subDays($i),
-        'genre' => 'Action'
-    ];
-}
 
 Route::group(
     [
@@ -25,51 +15,17 @@ Route::group(
         'prefix' => 'movie',
         'as' => 'movie.'
     ],
-    function () use ($movies) {
+    function () {
 
-        Route::get('/', function () use ($movies) {
-            return $movies;
-        });
+        Route::get('/', [MovieController::class, 'index']);
 
 
-        Route::get('/{id}', function ($id) use ($movies) {
-            return $movies[$id];
-        })->middleware(['isMembership']);
+        Route::get('/{id}', [MovieController::class, 'show']);
+
+        Route::post('/', [MovieController::class, 'store']);
 
 
+        Route::put('/{id}',[MovieController::class, 'update']);
 
-        Route::post('/', function () use ($movies) {
-
-            $movies[] = [
-                'title' => request('title'),
-                'genre' => request('genre'),
-                'release_date' => request('release_date')
-            ];
-
-            return $movies;
-        });
-
-        Route::put('/{id}', function ($id) use ($movies) {
-
-            $movies[$id]['title'] = request('title');
-            $movies[$id]['genre'] = request('genre');
-
-            return $movies;
-        });
-
-
-        Route::delete('/{id}', function ($id) use ($movies) {
-            unset($movies[$id]);
-
-            return $movies;
-        });
-
-        Route::get('/pricing', function () {
-            return 'Tolong Bayar';
-        });
-
-        Route::get('/login', function () {
-            return 'Login';
-        })->name('login-page');
-    }
-);
+        Route::delete('/{id}',[MovieController::class, 'destroy'] );
+    });
